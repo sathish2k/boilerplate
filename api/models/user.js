@@ -11,7 +11,7 @@ let usersSchema = new Schema({
       email:{
         type:'string',
         unique:true,
-        required:true
+        required:true,
       },
       password:{
         type:'string'
