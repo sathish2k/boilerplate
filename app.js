@@ -1,13 +1,21 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
+let passport = require('passport');
+let session = require('express-session');
+let RedisStore = require('connect-redis')(session);
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+let app = express();
 
-var app = express();
+//database connection
+let db = require('./config/connections.js')
+
+
+//routes
+let indexRouter = require('./routes/index');
+let usersRouter = require('./routes/users');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -16,9 +24,28 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
+//session 
+app.use(session({
+  secret:'SECR*T',
+  store: new RedisStore({
+    host: 'localhost',
+    port: 6379,
+    ttl: null,
+    db: 0,
+    pass: null,
+    prefix: 'sess:'
+  }),
+  cookie: { secure: true },
+  resave:false,
+  saveUninitialized:true
+}))
+
+
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -37,5 +64,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.listen(1337)
 
 module.exports = app;

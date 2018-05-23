@@ -1,6 +1,6 @@
 let Mongoose = require('mongoose');
 let Schema = Mongoose.Schema;
-
+let bcrypt   = require('bcrypt-nodejs');
 let usersSchema = new Schema({
     
       user_name:{
@@ -25,6 +25,16 @@ let usersSchema = new Schema({
         default: Date.now
       }
 })
+
+//generating hash for password
+usersSchema.methods.generateHash = function(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+// checking if password is valid
+usersSchema.methods.validPassword = function(password) {
+  return bcrypt.compareSync(password, this.password);
+};
 let users = Mongoose.model('User', usersSchema);
 
 module.exports = users

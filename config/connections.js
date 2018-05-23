@@ -1,7 +1,6 @@
 let Mongoose = require('mongoose');
 Mongoose.Promise = require('bluebird');
 let options = {
-    useMongoClient: true,
     autoIndex: false, 
     reconnectTries: Number.MAX_VALUE, 
     reconnectInterval: 500, 
