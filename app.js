@@ -32,6 +32,10 @@ app.use(session({
     resave:false
     
 }))
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport.js')(passport);
 
 app.use((req,res,next)=>{
 next(createError(404))

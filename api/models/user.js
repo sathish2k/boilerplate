@@ -34,6 +34,9 @@ let userSchema = new Schema({
     },
     githubId:{
         type:'string'
+    },
+    createdAt:{
+        type:'date'
     }
 })
 let user = Mongoose.model('Users', userSchema);
